@@ -1,0 +1,48 @@
+---
+- name: "Demo bucles"
+  hosts: nodos
+  vars:
+    usuarios:
+      - usuario07
+      - usuario08
+      - usuario09
+  vars_files:
+    vars/default.yaml
+
+  tasks:
+    - name: "Crea usuario"
+      user:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - usuario01
+        - usuario02
+        - usuario03  
+    - name: "Crea con bucles"
+      user:
+        name: "{{ item.nombre }}"
+        state: present
+        home: "{{ item.directorio }}"
+        uid: "{{ item.identificador }}"
+      loop:
+        - nombre: usuario04   
+          directorio: /home/usuario04
+          identificador: 1104
+        - nombre: usuario05   
+          directorio: /home/usuario05
+          identificador: 1105
+        - nombre: usuario06   
+          directorio: /home/usuario06
+          identificador: 1106          
+    - name: "Crea con lista de var"
+      user:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ usuarios }}"   
+    - name: "Crea con Array de diccionarios"
+      user:
+        name: "{{ item.key }}" 
+        uid: "{{ item.value.identificador }}"
+        comment: "{{ item.value.telefono }}" 
+      loop: "{{ mas_usuarios|dict2items }}"  
+...      

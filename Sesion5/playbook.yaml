@@ -1,0 +1,23 @@
+---
+- name "Probando Facts"
+  hosts: master
+  tasks: 
+    - name: "Imprime los fact"
+      debug:
+        var: ansible_facts
+
+    - name: "Imprimir varios facts"
+      debug:
+        msg: >
+          El nodo {{ ansible_facts['hostname'] }} tiene configurada ls IP  {{ ansible_facts[0default_ipv4]['address'] }}
+          su MAC address es {{ ansible_facts['default_ipv4']['macaddress'] }}
+
+    - name: "creacion de fichero"
+      file:
+        path: /tmp/datos_nodo.txt
+        mode: 0644
+    - name: "Insercion de datos en fichero"
+      lineinfile: 
+        path: /tmp/datos_nodo.txt
+        line: "El nodo con nombre {{ ansible_facts['hostname'] }} tiene la version de kernel {{ ansible_facts['kernel'] }}"
+        create: yes    

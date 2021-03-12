@@ -1,0 +1,14 @@
+---
+- name: "Demo de registros"
+  hosts: nodos
+  tasks:
+    - name: "Reinicio de sshd"
+      service:
+        name: sshd
+        state: restarted
+      register: estado_ssh
+
+    - name: "Ping a ssh"
+      command: ansible nodos -m ping
+      when: estado_ssh is change
+...

@@ -1,0 +1,7 @@
+mas_usuarios:
+  usuario10:
+    identificador: 1110
+    telefono: 666444555
+  usuario11:
+    identificador: 1111
+    telefono: 666777888 

@@ -1,0 +1,74 @@
+---
+- name: "Delgaciones"
+  hosts: nodos
+  vars:
+    paquetes:
+      - httpd
+      - http-tools
+    
+    fwall:
+      - http
+      - https
+
+  tasks:
+    - name: "install apache"
+      yum:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ paquetes }}" 
+
+    - name: "Hab Firewall"
+      firewalld:
+        service: "{{ item }}"
+        permanent: yes
+        immediate: yes
+        state: enabled
+      loop: "{{ fwall }}"
+
+    - name: " NoSelinux"
+      selinux: 
+        state: disabled
+     
+    - name: "Crea index_html"
+      ansible.builtin.file:
+        path: /var/www/html/index.html
+        mode: '0644'
+        owner: root
+        group: root
+
+    - name: "Contenido index_html"
+      blockinfile: 
+        - path: /var/www/html/index.html
+          block: |
+            <html>
+            <head>
+            <title>Welcome to Example.com!</title> 
+            </head>
+            <body>
+            <h1>Success! The example.com virtual host is working!</h1>
+            </body>
+            </html>
+
+    - name: "Activa apache"
+      service: 
+        name: httpd
+        state: restarted
+        enabled: yes
+
+    - name: "reinicio del nodo"
+      reboot:
+
+    - name: "Reinicio correcto"
+      wait_for:
+        hosts: "{{ inventory_hostname }}"  
+        port: 22
+        state: started
+      delegate_to: localhost
+
+    - name: "Reinicio apache "
+      wait_for:
+        hosts: "{{ inventory_hostname }}"  
+        port: 80
+        state: started
+      delegate_to: localhost         
+...
